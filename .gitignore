@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# Local database file (generated per user)
+
+# Flask instance folder (if any)
+
+# Editor settings
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+
+# Log files
+*.log
+

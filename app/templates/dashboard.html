@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* Dashboard Styling */
+        .dashboard-card {
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+        }
+        .revenue-card {
+            background-color: #28a745; /* Green */
+        }
+        .sales-card {
+            background-color: #007bff; /* Blue */
+        }
+        .low-stock-card {
+            background-color: #dc3545; /* Red */
+        }
+        .stock-card {
+            background-color: #ffc107; /* Yellow */
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="text-center text-primary fw-bold"><i class="fas fa-chart-pie"></i> Admin Dashboard</h1>
+
+        <!-- Dashboard Overview Cards -->
+        <div class="row mt-4 text-center">
+            <div class="col-md-6 mb-3">
+                <div class="dashboard-card revenue-card shadow-sm">
+                    <h4><i class="fas fa-money-bill-wave"></i> Total Revenue</h4>
+                    <p class="fs-3">₵{{ total_revenue }}</p>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="dashboard-card sales-card shadow-sm">
+                    <h4><i class="fas fa-shopping-cart"></i> Total Drinks Sold</h4>
+                    <p class="fs-3">{{ total_drinks_sold }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-md-6 mb-3">
+                <div class="dashboard-card low-stock-card shadow-sm">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h4>
+                    <p class="fs-3">{{ low_stock_count }}</p>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="dashboard-card stock-card shadow-sm">
+                    <h4><i class="fas fa-boxes"></i> Total Drinks Available</h4>
+                    <p class="fs-3">{{ total_drinks_available }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Admin Panel -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.admin') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Admin Panel</a>
+        </div>
+    </div>
+</body>
+</html>

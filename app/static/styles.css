@@ -1,0 +1,75 @@
+/* Styling for tables */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+.table-bordered {
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+}
+
+/* Styling for Available Inventory heading */
+.inventory-heading {
+    font-family: 'Georgia', serif;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #343a40;
+    text-align: center;
+    text-shadow: 1px 1px 2px #d3d3d3;
+    padding-bottom: 15px;
+}
+
+/* Add Drinks form Css here */
+.card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.input-custom {
+    border: 2px solid #ced4da;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.input-custom:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 15px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+h3 {
+    font-family: 'Arial, sans-serif';
+    font-weight: 700;
+    color: #333;
+}
+/* Add drinks form Css ends her */

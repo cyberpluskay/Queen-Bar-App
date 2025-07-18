@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        // Idle timeout in milliseconds (10 minutes)
+        const IDLE_TIMEOUT = 10 * 60 * 1000;
+    
+        let idleTimer;
+    
+        function resetTimer() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => {
+                // Redirect to logout after being idle
+                window.location.href = "{{ url_for('auth.logout') }}";
+            }, IDLE_TIMEOUT);
+        }
+    
+        // Reset timer on user activity
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeypress = resetTimer;
+        document.onscroll = resetTimer;
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* Custom Colors for Sales Table */
+        .sales-row:nth-child(odd) {
+            background-color: #f8f9fa;
+        }
+        .sales-row:nth-child(even) {
+            background-color: #e3f2fd;
+        }
+        .sales-row td {
+            font-weight: bold;
+        }
+        .highlight {
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .revenue {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+        .items-sold {
+            background-color: #4caf50;
+            color: #fff;
+        }
+        .bold-text {
+            font-weight: bold;
+        }
+        .todays-sales {
+            background-color: #ff9800;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        function addDrinkRow() {
+            const row = `
+                <div class="row mb-3 drink-row">
+                    <div class="col-md-6">
+                        <label for="drink_id" class="form-label">Select Drink</label>
+                        <select name="drink_id[]" class="form-select" required>
+                            {% for drink in drinks %}
+                            <option value="{{ drink.id }}">{{ drink.name }} - ₵{{ drink.price }} ({{ drink.quantity }} left)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" name="quantity[]" class="form-control" min="1" required>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-row">Remove</button>
+                    </div>
+                </div>`;
+            document.getElementById('drinks-container').insertAdjacentHTML('beforeend', row);
+        }
+
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-row')) {
+                event.target.closest('.drink-row').remove();
+            }
+        });
+    </script>
+</head>
+<body class="bg-light">
+    <!-- Navigation Bar with Logout Button -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Bartender Panel</a>
+            <div class="d-flex align-items-center">
+                {% if current_user.is_authenticated %}
+                    <span class="text-white me-3">Welcome, {{ current_user.username }}</span>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="{{ url_for('main.change_password') }}" class="btn btn-outline-warning me-2">Change Password</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center text-primary bold-text"><i class="fas fa-cocktail"></i> Bartender Panel</h1>
+
+        <!-- Daily Sales Summary -->
+        <div class="row mb-4 text-center">
+            <div class="col-md-6">
+                <div class="highlight revenue shadow-sm">
+                    <i class="fas fa-money-bill-wave"></i> Total Revenue Today: ₵{{ total_daily_sales }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="highlight items-sold shadow-sm">
+                    <i class="fas fa-shopping-cart"></i> Total Items Sold: {{ total_items_sold }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sale Success Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert alert-success text-center">
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Sell Drinks Form -->
+<form method="POST">
+    <div id="drinks-container">
+        <!-- Initial Drink Row -->
+        <div class="row mb-3 drink-row">
+            <div class="col-md-6">
+                <label for="drink_id" class="form-label">Select Drink</label>
+                <select name="drink_id[]" class="form-select" required>
+                    <option value="">Select a drink</option>  <!-- No disabled, allows empty -->
+                    {% for drink in drinks %}
+                    <option value="{{ drink.id }}">{{ drink.name }} - ₵{{ drink.price }} ({{ drink.quantity }} left)</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" name="quantity[]" class="form-control" min="1" required>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="button" class="btn btn-danger remove-row">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Option to print receipt -->
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="yes" id="printReceipt" name="print_receipt">
+        <label class="form-check-label" for="printReceipt">
+            Print Receipt
+        </label>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between mb-3">
+        <button type="button" class="btn btn-info" onclick="addDrinkRow()">Add Drink</button>
+        <button type="submit" class="btn btn-primary">Sell Drinks</button>
+    </div>
+</form>
+
+
+        <!-- Today's Sales Table -->
+        <div class="mt-5">
+            <h2 class="text-center todays-sales bold-text"><i class="fas fa-chart-line"></i> Today's Sales</h2>
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Drink</th>
+                        <th>Quantity</th>
+                        <th>Total Price (₵)</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in today_sales %}
+                    <tr class="sales-row">
+                        <td>{{ sale.id }}</td>
+                        <td>{{ sale.drink.name }}</td>
+                        <td>{{ sale.quantity }}</td>
+                        <td>₵{{ sale.total_price }}</td>
+                        <td>{{ sale.date.strftime('%H:%M:%S') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back to Admin Panel -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.admin') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Admin Panel</a>
+        </div>
+    </div>
+</body>
+</html>
